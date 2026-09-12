@@ -83,4 +83,4 @@ The desktop preview rendered at approximately 60 frames per second at a stationa
 
 `live/build_tables.py` regenerates the lookup tables from `render.py`. `live/reference.cpp`, `live/reference-samples.json`, and `live/compare_reference.py` preserve the sampled comparison inputs and reference calculation; the comparison script contains its build/run commands. The reference uses double-precision integration and float32 hit records.
 
-The original 6K files remain available through `still-study.html`. No public hosting was performed.
+The original 6K files remain available through `still-study.html`. The public observatory is hosted at [https://scientificaj.github.io/echoes-of-light/](https://scientificaj.github.io/echoes-of-light/), with source at [https://github.com/ScientificAJ/echoes-of-light](https://github.com/ScientificAJ/echoes-of-light).

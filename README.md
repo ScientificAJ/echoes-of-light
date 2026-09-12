@@ -1,5 +1,7 @@
 # ECHOES OF LIGHT
 
+**[Open the public observatory](https://scientificaj.github.io/echoes-of-light/)**
+
 An interactive Kerr black hole observatory. Light propagation, disk visibility, frequency shifts, and delayed images come from a shared numerical model.
 
 ![ECHOES OF LIGHT](echoes-of-light-preview.jpg)
