@@ -1,4 +1,4 @@
 # Tested on Python 3.12. C++ renderer additionally requires g++ and OpenMP.
 numpy==1.26.4
 scipy==1.11.4
-Pillow==10.2.0
+Pillow==12.3.0
