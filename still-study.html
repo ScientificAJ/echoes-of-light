@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ECHOES OF LIGHT — A Kerr light study</title>
+<style>
+:root{color-scheme:dark;font-family:Arial,Helvetica,sans-serif;background:#000;color:#d9d6cf}
+*{box-sizing:border-box}body{margin:0}a{color:inherit;text-decoration:none}a:hover{text-decoration:underline;text-underline-offset:5px}
+button{font:inherit;color:inherit;background:transparent;border:1px solid #62615d;cursor:pointer;padding:13px 20px;border-radius:0}
+button:hover,button[aria-pressed=true]{background:#d9d6cf;color:#080808}button:focus-visible,a:focus-visible{outline:2px solid #f0cda1;outline-offset:5px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.hero{display:block;width:100%;height:auto}.utility{display:flex;justify-content:space-between;align-items:center;gap:28px;margin:0 7%;padding:14px 0 42px;border-bottom:1px solid #282725;font-size:12px;letter-spacing:.08em}
+.links{display:flex;flex-wrap:wrap;gap:26px}.jump{color:#b5a58f}.chapter{max-width:1500px;margin:110px auto;padding:0 7%}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#a39b90;margin:0 0 24px}
+h2{font-weight:400;font-size:clamp(26px,3vw,43px);letter-spacing:-.025em;line-height:1.2;margin:0 0 26px}
+p{font-size:15px;line-height:1.8;color:#aba8a1;margin:0 0 24px}.intro{max-width:590px}
+.study{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(270px,.7fr);gap:70px;align-items:center;margin-top:52px}
+.frame{position:relative;min-width:0}.frame img{display:block;width:100%;height:auto}.pin{position:absolute;transform:translate(-50%,-50%);width:32px;height:32px;border:1px solid #e2d1b7;border-radius:50%;display:none;align-items:center;justify-content:center;color:#f0e6d7;background:#090909a0;font-size:11px;box-shadow:0 0 0 5px #0004;pointer-events:none}
+.marked .pin{display:flex}.pin::after{content:attr(data-label);position:absolute;top:38px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#080808dd;padding:5px 8px;font-size:10px;letter-spacing:.04em}
+.source{margin:32px 0 26px;border-top:1px solid #33312d}.source>div{display:grid;grid-template-columns:24px 1fr;column-gap:14px;padding:17px 0;border-bottom:1px solid #33312d}
+.source strong{font-size:14px;font-weight:400}.source small{display:block;font-size:12px;color:#aaa49a;margin-top:7px;line-height:1.6}.letter{font-size:12px;color:#d4b88e;padding-top:2px}.muted{color:#918b83;font-size:12px;line-height:1.7}
+.notes{max-width:800px;margin:100px auto 0}.notes details{border-top:1px solid #33312d;padding:23px 0}.notes summary{font-size:15px;cursor:pointer;list-style-position:outside;margin-left:17px;padding-left:8px}.notes details p{margin:20px 0 0;font-size:14px}
+.notes a{text-decoration:underline;text-underline-offset:4px}.footer{display:flex;gap:24px;justify-content:space-between;margin-top:60px;font-size:11px;color:#918b83;letter-spacing:.07em}
+@media(max-width:760px){.utility{align-items:flex-start;flex-direction:column;gap:20px;padding-bottom:28px}.links{gap:18px;font-size:11px}.chapter{margin-top:65px}.study{grid-template-columns:1fr;gap:32px;margin-top:28px}.study-copy{max-width:590px}p{font-size:14px}.notes{margin-top:65px}.footer{flex-direction:column}.pin{width:28px;height:28px}.pin::after{top:33px}button{min-height:44px}}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<main>
+<h1 class="sr-only">ECHOES OF LIGHT</h1>
+<img class="hero" src="echoes-of-light-titled.png" width="6000" height="3375" alt="ECHOES OF LIGHT. A black Kerr shadow sits slightly off center in a dark landscape. A finely filamented disk cuts upward diagonally, brilliant on its approaching left side, with a faint narrow echo beside the darkness. Extreme ultraviolet false color.">
+<nav class="utility" aria-label="Artwork and downloads"><a class="jump" href="#echoes">Explore the echoes ↓</a><div class="links"><a href="echoes-of-light-titled.png" download>6K master ↓</a><a href="echoes-of-light.png" download>Without lettering ↓</a><a href="PHYSICS.md">Physical notes ↗</a></div></nav>
+<section class="chapter" id="echoes" aria-labelledby="echo-heading">
+<div class="intro"><p class="eyebrow">The same light, another path</p><h2 id="echo-heading">A filament returns<br>from an earlier moment.</h2><p>Gravity carries different views of the same orbiting structure to the camera. This close view traces the scene at finer sampling, revealing the slender image beside the darkness.</p></div>
+<div class="study">
+<div class="frame" id="detail-frame"><img src="echoes-detail.png" width="3200" height="3200" alt="A fresh close ray pass of the same disk. A narrow secondary image runs beside the dark depression; still finer images are near the sampling limit."><span class="pin" style="left:71.890253%;top:52.798316%" data-label="Direct image" aria-hidden="true">A</span><span class="pin" style="left:19.3203125%;top:42.2578125%" data-label="First echo" aria-hidden="true">B</span></div>
+<div class="study-copy"><p class="eyebrow">Follow one material point</p><h2>4.19 hours<br>between its images.</h2><p>Both locations identify the same point carried by the bright filament. The first echo shows it at an earlier orbital position, because that light took a different path.</p><button id="locate" type="button" aria-pressed="false" aria-controls="detail-frame">Locate the filament</button>
+<div class="source"><div><span class="letter">A</span><div><strong>Direct image</strong><small>Frequency ratio g = 0.5537<br>Material radius 5.39388 GM/c²</small></div></div><div><span class="letter">B</span><div><strong>First echo</strong><small>Emission 4.185 hours earlier<br>Frequency ratio g = 0.8944</small></div></div></div>
+<p class="muted" id="label-status" aria-live="polite">The markers are hidden so you can inspect the light itself.</p><p class="muted">This is one observation time. These are views of the same moving material at different ages, rather than two copies of a single flash. The annotation circles are guides, not physical rings.</p><a class="muted" href="echoes-detail.png" download>Open the 3,200-pixel close view ↓</a></div>
+</div>
+<div class="notes">
+<p class="eyebrow">What was calculated</p>
+<details open><summary>The spacetime and the dark region</summary><p>A 100-million-solar-mass Kerr black hole with spin a* = 0.9, viewed 15° above a prograde equatorial disk. Light paths, image displacement, azimuthal frame dragging, and frequency shifts follow that metric. The horizon lies at r = 1.43589 GM/c²; the disk begins at the ISCO, r = 2.32088 GM/c². The horizon emits nothing. The larger capture shadow is partly covered by foreground disk emission.</p></details>
+<details><summary>One opaque disk, all of its visible images</summary><p>Each ray stops at the first disk surface it encounters. Every image samples the same evolving filament field at its own calculated emission time. The zero-torque Novikov–Thorne temperature profile provides the baseline; turbulent heating is procedural, not a fluid simulation. Finite disk thickness, returning radiation, scattering, and magnetic dynamics are omitted.</p></details>
+<details><summary>Why the light has these colors</summary><p>This is explicitly false color: observed extreme-ultraviolet wavelengths from 21.11 to 43.33 nm are mapped to visible wavelengths by a fixed factor of 18. Blackbody spectra are shifted by the combined gravitational and Doppler factor, then integrated through a defined CIE camera response. A fixed exposure and gentle highlight compression preserve the approaching–receding asymmetry. Bloom is a restrained display approximation.</p></details>
+<details><summary>What the resolution supports</summary><p>The master uses 81 million rays; this close view uses another 40.96 million. Radiance is averaged over four samples per pixel. The first echo is visible. Parts of later images approach the pixel limit, and higher orders are often only subpixel contributions. They have not been enlarged into glowing halos. All final rays resolved; sampled step-convergence, geodesic-constraint, and analytic-shadow checks passed.</p></details>
+<p class="muted" style="margin-top:30px"><a href="PHYSICS.md">Full physical assumptions and reproduction instructions</a> · <a href="filament-images.json">Filament correspondence</a> · <a href="verification.json">Numerical checks</a></p>
+<p class="muted">Geodesic foundations: <a href="https://arxiv.org/abs/1910.12881">Gralla &amp; Lupsasca</a>. Disk flux: <a href="https://articles.adsabs.harvard.edu/pdf/1974ApJ...191..499P">Page &amp; Thorne</a>. Color matching: <a href="https://research.nvidia.com/labs/rtr/publication/wyman2013simple/">Wyman, Sloan &amp; Shirley</a>.</p>
+<footer class="footer"><span>ECHOES OF LIGHT / 2026</span><span>Numerical geometry. Procedural emission. Disclosed false color.</span></footer>
+</div>
+</section>
+</main>
+<script>
+const button=document.getElementById('locate');const frame=document.getElementById('detail-frame');const status=document.getElementById('label-status');
+button.addEventListener('click',()=>{const shown=button.getAttribute('aria-pressed')!=='true';button.setAttribute('aria-pressed',String(shown));frame.classList.toggle('marked',shown);button.textContent=shown?'Hide the markers':'Locate the filament';status.textContent=shown?'A and B locate the same material point, with B emitted 4.185 hours earlier.':'The markers are hidden so you can inspect the light itself.';});
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Orbit a Kerr black hole. Explore ray-traced light, retarded echoes and an evolving accretion disk."><title>ECHOES OF LIGHT — Interactive Kerr Observatory</title><link rel="stylesheet" href="live/style.css"></head>
+<body>
+<main class="app">
+<section class="stage" aria-label="Interactive black hole">
+<canvas id="cosmos" tabindex="0" aria-label="Interactive Kerr black hole. Drag to orbit, scroll or pinch to zoom, tap to inspect a ray. Arrow keys orbit; plus and minus zoom; Space pauses; R resets.">WebGL 2 is required to render the interactive scene.</canvas>
+<header class="title"><h1>ECHOES OF LIGHT</h1><p>A living study in curved spacetime</p></header>
+<div class="top-actions"><button id="controls-toggle" aria-expanded="true" aria-controls="panel">Controls</button><button id="fullscreen" aria-label="Toggle fullscreen">⛶</button></div>
+<div id="loading" role="status">Tracing light through Kerr spacetime…</div>
+<aside id="probe" hidden aria-live="polite"><button id="probe-close" aria-label="Close ray inspection">×</button><strong id="probe-title"></strong><span id="probe-data"></span></aside>
+<div class="bottom">
+<div class="hint">DRAG TO ORBIT · SCROLL / PINCH TO ZOOM · TAP TO INSPECT</div>
+<div class="transport"><button id="pause" aria-pressed="false">Ⅱ Pause</button><button id="reset" title="Reset view and time (R)">↺ Reset</button><span class="spacer"></span><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><output aria-live="off" class="clock" id="time-value">+0.00 h</output></div>
+<label class="sr-only" for="timeline" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Observation time in hours</label><input class="timeline" id="timeline" type="range" min="-24" max="48" step="0.01" value="0" aria-label="Observation time in hours">
+<div class="foot"><span class="left-foot"><span id="compression">1 second = 30 min</span><span id="band">EUV · FALSE COLOR</span></span><span><span id="resolution">Tracing</span> · <span id="fps">— fps</span></span></div>
+</div>
+</section>
+<aside class="panel" id="panel" aria-label="Observatory controls">
+<div class="panel-top"><p class="eyebrow">Observatory controls</p><button id="panel-close" aria-label="Hide controls">×</button></div>
+<div class="params">M = 100,000,000 M☉<br>a* = 0.9 · prograde Kerr<br>ISCO = 2.32088 rg</div>
+<div class="presets"><button id="wide">Wide composition</button><button id="underside">Lensed underside</button><button id="face">Above the disk</button><button id="echo">Into the echoes</button></div>
+<div class="group"><p class="group-title">Observer</p>
+<div class="field"><div class="label-row"><label for="elevation">Above disk plane</label><output aria-live="off" id="elevation-value">15.0°</output></div><input type="range" id="elevation" min="-85" max="85" step="0.5" value="15"></div>
+<div class="field"><div class="label-row"><label for="azimuth">Orbit around axis</label><output aria-live="off" id="azimuth-value">0°</output></div><input type="range" id="azimuth" min="0" max="360" step="1" value="0"></div>
+<div class="field"><div class="label-row"><label for="roll">Camera roll</label><output aria-live="off" id="roll-value">13°</output></div><input type="range" id="roll" min="-90" max="90" step="1" value="13"></div>
+<p class="note" id="view-value">55.0 rg field</p></div>
+<div class="group"><p class="group-title">Light &amp; time</p>
+<div class="field"><div class="label-row"><label for="exposure">Exposure</label><output aria-live="off" id="exposure-value">+0.0 EV</output></div><input type="range" id="exposure" min="-3" max="3" step="0.1" value="0"></div>
+<div class="field"><div class="label-row"><label for="bloom">Optical bloom</label><output aria-live="off" id="bloom-value">20%</output></div><input type="range" id="bloom" min="0" max="60" step="1" value="20"></div>
+<div class="field"><div class="label-row"><label for="speed">Time compression</label></div><select id="speed"><option value="1">1× · real time</option><option value="60">60× · 1 minute / second</option><option value="600">600× · 10 minutes / second</option><option value="1800" selected>1,800× · 30 minutes / second</option><option value="3600">3,600× · 1 hour / second</option></select></div>
+<div class="field"><div class="label-row"><label for="spectrum">Camera response</label></div><select id="spectrum"><option value="euv">Extreme UV → visible · false color</option><option value="visible">Visible light · spectral color</option></select></div></div>
+<div class="group"><p class="group-title">Explore</p>
+<div class="field"><div class="label-row"><label for="mode">Visible light paths</label></div><select id="mode"><option value="0">All observable light</option><option value="1">Direct disk image only</option><option value="2">Lensed echoes only</option><option value="3">Frequency shift · diagnostic</option><option value="4">Image order · diagnostic</option></select></div>
+<label class="check"><input id="highlight" type="checkbox">Isolate the moving filament</label>
+<div class="field"><div class="label-row"><label for="quality">Rendering quality</label></div><select id="quality"><option value="fast">Fast · 560 pixels wide</option><option value="balanced" selected>Balanced · 1,000 pixels wide</option><option value="fine">Fine · 1,600 pixels wide</option></select></div>
+<p class="note">Detail stays sharp while you move. Choose Fast for lighter devices or Fine for closer inspection.</p></div>
+<div class="panel-bottom"><button id="tour">Guided orbit</button><button id="snapshot">Save current view ↓</button><button id="about-open">Study &amp; source</button></div><p id="renderer-state">GPU Kerr renderer</p>
+</aside>
+</main>
+<dialog id="about"><header><h2>ECHOES OF LIGHT</h2><button id="about-close" aria-label="Close physical notes">×</button></header>
+<p>Every viewpoint is ray-traced in the Kerr metric. The disk’s temperature and spectrum are evaluated at the emission time of each light path. Direct and lensed images share one evolving material field.</p>
+<h3>Interact</h3><p>Drag to orbit, scroll or pinch to zoom, and tap a point to inspect its ray. Use the time bar to scrub through the transient. Space pauses, arrow keys orbit, +/− zoom, R resets, and H hides the controls. “Lensed echoes only” and “Isolate the moving filament” reveal repeated structure without enlarging its physical width.</p>
+<h3>Clock and camera</h3><p>The default compression is 1,800×: one real second represents 30 minutes. An ISCO orbit takes 3.813 physical hours. The observer remains asymptotically distant; zoom changes the optical field of view. Azimuth spans 360°, with elevations from −85° to +85°.</p>
+<h3>Physical model and limits</h3><p>M = 10⁸ solar masses; a* = 0.9. Prograde circular orbits in an opaque razor-thin disk from the ISCO to 38 rg. Novikov–Thorne baseline flux, procedural turbulent heating, blackbody emission, combined gravitational/Doppler shifts, and retarded times. No visible horizon surface, artificial halo, jets, or light from inside the horizon.</p>
+<p>Real-time geodesics use 32-bit GPU arithmetic and adaptive Runge–Kutta steps. This is less precise and less finely sampled than the offline 6K render. Very narrow higher-order images may remain unresolved. The selected resolution and integration precision stay fixed while orbiting; demanding camera moves may reduce the frame rate. Diagnostic modes are explicitly artificial color maps.</p>
+<h3>Spectrum</h3><p>“Extreme UV → visible” uses a fixed 18× wavelength stretch: 21.11–43.33 nm maps to 380–780 nm. “Visible light” integrates the actual visible band. Both use the same CIE spectral response, fixed relative exposure and a highlight shoulder. Background stars are synthetic hot sources. Bloom is an adjustable display effect. There is no sound.</p>
+<p><a href="PHYSICS.md" target="_blank">Full physical assumptions</a> · <a href="still-study.html" target="_blank">6K still and annotated study</a> · <a href="LIVE-NOTES.md" target="_blank">Interactive rendering notes</a></p>
+</dialog>
+<script>document.getElementById('panel-close').addEventListener('click',()=>document.getElementById('controls-toggle').click());if(matchMedia('(max-width:700px)').matches){document.body.classList.add('controls-hidden');document.getElementById('controls-toggle').setAttribute('aria-expanded','false');}</script>
+<script src="live/spectra.js"></script><script src="live/shaders.js"></script><script src="live/app.js"></script>
+</body></html>

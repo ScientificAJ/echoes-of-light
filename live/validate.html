@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><title>Kerr GPU numerical comparison</title><body style="background:#10110f;color:#ddd;font:14px monospace"><h1>GPU transfer-map validation</h1><canvas id="c" width="128" height="80"></canvas><pre id="result">Running…</pre><script src="shaders.js"></script><script>
+const options=new URLSearchParams(location.search),inc=+(options.get('inclination')||75),field=+(options.get('field')||55),step=+(options.get('step')||.028);const gl=document.getElementById('c').getContext('webgl2');gl.getExtension('EXT_color_buffer_float');
+function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
+const p=gl.createProgram();gl.attachShader(p,shader(gl.VERTEX_SHADER,ECHO_SHADERS.vertex));gl.attachShader(p,shader(gl.FRAGMENT_SHADER,ECHO_SHADERS.trace));gl.linkProgram(p);gl.useProgram(p);
+const f=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,f);
+for(let k=0;k<2;k++){const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,128,80,0,gl.RGBA,gl.FLOAT,null);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0+k,gl.TEXTURE_2D,t,0);}
+gl.drawBuffers([gl.COLOR_ATTACHMENT0,gl.COLOR_ATTACHMENT1]);gl.viewport(0,0,128,80);
+gl.uniform2f(gl.getUniformLocation(p,'uSize'),128,80);gl.uniform1f(gl.getUniformLocation(p,'uWidth'),field);gl.uniform1f(gl.getUniformLocation(p,'uInclination'),Math.PI*inc/180);gl.uniform1f(gl.getUniformLocation(p,'uRoll'),Math.PI*13/180);gl.uniform1f(gl.getUniformLocation(p,'uStep'),step);gl.drawArrays(gl.TRIANGLES,0,3);
+const a=new Float32Array(128*80*4),b=new Float32Array(128*80*4);gl.readBuffer(gl.COLOR_ATTACHMENT0);gl.readPixels(0,0,128,80,gl.RGBA,gl.FLOAT,a);gl.readBuffer(gl.COLOR_ATTACHMENT1);gl.readPixels(0,0,128,80,gl.RGBA,gl.FLOAT,b);
+let failed=0;const samples=[];for(let y=0;y<80;y++)for(let x=0;x<128;x++){const j=(y*128+x)*4;if(b[j]<0)failed++;if((y*128+x)%37===0)samples.push({x,y,hit:Array.from(a.slice(j,j+4)),path:Array.from(b.slice(j,j+4))});}
+document.getElementById('result').textContent=JSON.stringify({width:128,height:80,inclination:inc,field,step,failed,glError:gl.getError(),samples});
+</script>

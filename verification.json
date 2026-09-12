@@ -1,0 +1,14 @@
+{
+  "random_rays":16000,
+  "failed":0,
+  "step_halving_classification_mismatches":0,
+  "compared_disk_rays":12625,
+  "max_delta_r_rg":3.814697266e-06,
+  "max_delta_phi_rad":4.768371582e-07,
+  "max_delta_time_tg":3.814697266e-06,
+  "max_delta_g":1.192092896e-07,
+  "max_normalized_radial_constraint_error":7.113873946e-09,
+  "max_normalized_polar_constraint_error":3.340634013e-10,
+  "analytic_shadow_bracket_rays":3824,
+  "analytic_shadow_mismatches":0
+}

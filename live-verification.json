@@ -1,0 +1,155 @@
+{
+  "solver": "GPU RK4 with regular polar phase and analytic singular azimuth integral",
+  "reference": "Double-precision mu-coordinate RK4 at step scale 0.125",
+  "step_coefficient": 0.028,
+  "camera_tests": [
+    {
+      "inclination_degrees": 75,
+      "field_rg": 55,
+      "grid_rays": 10240,
+      "unresolved_grid_rays": 0,
+      "compared_rays": 277,
+      "classification_mismatches": 0,
+      "disk_comparisons": 192,
+      "max_abs_error_r_phi_t_g": [
+        0.000221252499997604,
+        7.157543944202871e-07,
+        0.0001869166406223144,
+        3.5762390138138755e-07
+      ],
+      "median_abs_error_r_phi_t_g": [
+        5.718269042276347e-06,
+        2.3814477545514023e-07,
+        6.675263672484277e-06,
+        1.1886035156116748e-07
+      ]
+    },
+    {
+      "inclination_degrees": 75,
+      "field_rg": 14,
+      "grid_rays": 10240,
+      "unresolved_grid_rays": 0,
+      "compared_rays": 277,
+      "classification_mismatches": 0,
+      "disk_comparisons": 207,
+      "max_abs_error_r_phi_t_g": [
+        6.437292407213135e-05,
+        1.3116612549435303e-06,
+        8.20143749997726e-05,
+        8.347452391532784e-07
+      ],
+      "median_abs_error_r_phi_t_g": [
+        1.906733398726601e-06,
+        2.2724477050789504e-07,
+        3.337420166005245e-06,
+        1.192003784566964e-07
+      ]
+    },
+    {
+      "inclination_degrees": 102,
+      "field_rg": 35,
+      "grid_rays": 10240,
+      "unresolved_grid_rays": 0,
+      "compared_rays": 277,
+      "classification_mismatches": 0,
+      "disk_comparisons": 216,
+      "max_abs_error_r_phi_t_g": [
+        9.53651464854488e-05,
+        1.3110047607511888e-06,
+        0.000129704013673404,
+        6.55617895528593e-07
+      ],
+      "median_abs_error_r_phi_t_g": [
+        6.671499023447325e-06,
+        2.384686278236736e-07,
+        1.144355566395916e-05,
+        1.1895269780293205e-07
+      ]
+    },
+    {
+      "inclination_degrees": 15,
+      "field_rg": 40,
+      "grid_rays": 10240,
+      "unresolved_grid_rays": 0,
+      "compared_rays": 277,
+      "classification_mismatches": 0,
+      "disk_comparisons": 267,
+      "max_abs_error_r_phi_t_g": [
+        7.632148438574404e-06,
+        1.1916456297278444e-06,
+        1.8001092773500815e-05,
+        2.681759430078756e-07
+      ],
+      "median_abs_error_r_phi_t_g": [
+        1.4303195801090851e-06,
+        2.38173339717207e-07,
+        2.3841694334336694e-06,
+        5.959677729094892e-08
+      ]
+    },
+    {
+      "inclination_degrees": 90,
+      "field_rg": 55,
+      "grid_rays": 10240,
+      "unresolved_grid_rays": 0,
+      "compared_rays": 277,
+      "classification_mismatches": 0,
+      "disk_comparisons": 81,
+      "max_abs_error_r_phi_t_g": [
+        0.0003128030078123345,
+        9.54098510863588e-07,
+        0.0003547618554691212,
+        1.6093693114838103e-06
+      ],
+      "median_abs_error_r_phi_t_g": [
+        7.630830079818907e-06,
+        2.386444091229123e-07,
+        1.5256650392814208e-05,
+        5.965338745195226e-08
+      ]
+    },
+    {
+      "inclination_degrees": 5,
+      "field_rg": 40,
+      "grid_rays": 10240,
+      "unresolved_grid_rays": 0,
+      "compared_rays": 277,
+      "classification_mismatches": 0,
+      "disk_comparisons": 268,
+      "max_abs_error_r_phi_t_g": [
+        9.532373045573195e-06,
+        1.5498111571865536e-06,
+        1.5496742187703916e-05,
+        2.6821642151730885e-07
+      ],
+      "median_abs_error_r_phi_t_g": [
+        1.4303223876410698e-06,
+        4.763814087649365e-07,
+        2.682353027361195e-06,
+        5.9598132318150476e-08
+      ]
+    },
+    {
+      "inclination_degrees": 175,
+      "field_rg": 40,
+      "grid_rays": 10240,
+      "unresolved_grid_rays": 0,
+      "compared_rays": 277,
+      "classification_mismatches": 0,
+      "disk_comparisons": 269,
+      "max_abs_error_r_phi_t_g": [
+        9.539423828641702e-06,
+        3.5767679442688664e-06,
+        3.933858691418379e-05,
+        4.7683385312469184e-07
+      ],
+      "median_abs_error_r_phi_t_g": [
+        1.9058251936598936e-06,
+        6.556127685186652e-07,
+        5.007180663874067e-06,
+        5.960465088161726e-08
+      ]
+    }
+  ],
+  "limitations": "Sampled grids, not a certification of all camera configurations or all higher-order subrings."
+}

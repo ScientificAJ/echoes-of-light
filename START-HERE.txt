@@ -1,0 +1,14 @@
+ECHOES OF LIGHT — Interactive Kerr Observatory
+
+Extract this entire folder, then open index.html in a browser with WebGL 2.
+All rendering runs locally. No account or server is needed.
+
+Drag to orbit. Scroll/pinch to zoom. Tap to inspect a light ray.
+Use the time bar, spectral camera, echo isolation, and guided orbit.
+Read LIVE-NOTES.md for controls and live rendering approximations.
+Read PHYSICS.md for the underlying physical model and reference still.
+The original 6K images are available in still-study.html.
+
+If your browser restricts local files, serve this folder locally:
+python3 -m http.server 8317 --bind 127.0.0.1
+Then open http://127.0.0.1:8317

@@ -1,0 +1,34 @@
+{
+  "desktop_preview": "Chromium-based Codex in-app browser, localhost, 1280x720",
+  "checked": [
+    "GPU shader compilation and live rendering",
+    "Camera drag, wheel zoom, presets, and keyboard slider inputs",
+    "Pause and resumed coordinate-time advancement",
+    "Timeline scrub pauses at selected observation time",
+    "Direct disk ray inspection with r, g, and emission coordinate",
+    "Visible/EUV spectrum switching",
+    "Echo-only view and filament isolation",
+    "Study/source modal opens and closes",
+    "40-second guided orbit reaches 15 degrees elevation, 70 degrees azimuth, and 24 rg field",
+    "Manual azimuth input cancels guided orbit",
+    "No browser console errors during checked interactions",
+    "Source JavaScript syntax checks",
+    "Seven-camera GPU/reference comparison",
+    "16000-ray reference step-halving and analytic shadow checks"
+  ],
+  "limits": [
+    "Direct file:// navigation could not be exercised by the browser automation URL policy; scripts are local classic scripts with no runtime fetch or external dependency.",
+    "Touch/pinch, native PNG download completion, fullscreen, and mobile device performance were not device-tested.",
+    "A requested mobile viewport override did not change the test tab size; responsive CSS was reviewed, not visually validated on a phone."
+  ],
+  "sharp_motion_update": {
+    "automatic_resolution_drop": false,
+    "fixed_integration_step": 0.028,
+    "continuous_orbit_sample": {
+      "ray_map": "1000 x 716",
+      "displayed_fps": 33,
+      "elevation_degrees": -11.1
+    },
+    "note": "Measured during a live guided orbit in the local browser; performance is device-dependent."
+  }
+}
