@@ -121,17 +121,15 @@ uint hashGrid(ivec2 p,uint seed){uint h=(uint(p.x)*73856093u)^(uint(p.y)*1934966
 float value(ivec2 p,int period){p.y=(p.y%period+period)%period;return float(hashGrid(p,1783u)&65535u)/32767.5-1.;}
 float noise2(vec2 p,int period){ivec2 i=ivec2(floor(p));vec2 f=fract(p);f=f*f*(3.-2.*f);
  return mix(mix(value(i,period),value(i+ivec2(1,0),period),f.x),mix(value(i+ivec2(0,1),period),value(i+ivec2(1,1),period),f.x),f.y);}
-float bandWeight(vec2 footprint,float radial,float azimuth){return 1.-smoothstep(.6,1.8,max(radial*footprint.x,azimuth*footprint.y/(2.*PI)));}
-float filteredNoise(vec2 p,int period,float weight){if(weight<=0.)return 0.;return weight*noise2(p,period);}
-vec2 field(float r,float phi,float t,vec2 footprint){
+vec2 field(float r,float phi,float t){
  float phase=phi-(t+160.)/(r*sqrt(r)+.9),lr=log(r),warp=noise2(vec2(7.*lr,phase*4./(2.*PI)),4);
- float n=.75*filteredNoise(vec2(16.*lr+1.4*warp,phase*8./(2.*PI)),8,bandWeight(footprint,16.,8.))
-  +.55*filteredNoise(vec2(39.*lr+1.4*warp,phase*16./(2.*PI)),16,bandWeight(footprint,39.,16.))
-  +.36*filteredNoise(vec2(87.*lr+1.4*warp,phase*32./(2.*PI)),32,bandWeight(footprint,87.,32.))
-  +.24*filteredNoise(vec2(181.*lr+1.4*warp,phase*64./(2.*PI)),64,bandWeight(footprint,181.,64.))
-  +.16*filteredNoise(vec2(379.*lr+1.4*warp,phase*128./(2.*PI)),128,bandWeight(footprint,379.,128.))
-  +.10*filteredNoise(vec2(773.*lr+1.4*warp,phase*256./(2.*PI)),256,bandWeight(footprint,773.,256.))
-  +.12*sin(141.*lr+4.*phase+6.*warp)*bandWeight(footprint,141./(2.*PI),4.);
+ float n=.75*noise2(vec2(16.*lr+1.4*warp,phase*8./(2.*PI)),8)
+  +.55*noise2(vec2(39.*lr+1.4*warp,phase*16./(2.*PI)),16)
+  +.36*noise2(vec2(87.*lr+1.4*warp,phase*32./(2.*PI)),32)
+  +.24*noise2(vec2(181.*lr+1.4*warp,phase*64./(2.*PI)),64)
+  +.16*noise2(vec2(379.*lr+1.4*warp,phase*128./(2.*PI)),128)
+  +.10*noise2(vec2(773.*lr+1.4*warp,phase*256./(2.*PI)),256)
+  +.12*sin(141.*lr+4.*phase+6.*warp);
  // Integer azimuthal harmonic keeps the source continuous over a full orbit.
  float az=wrap(phase-1.),rr=5.4+.45*sin(2.*phase+1.);
  float f=exp(-.5*pow((r-rr)/.07,2.)-.5*pow(az/.65,2.))+.45*exp(-.5*pow((r-rr-.14)/.035,2.)-.5*pow(az/.55,2.));
@@ -143,11 +141,8 @@ vec4 lookup(sampler2D tex,float x,int count){float p=clamp(x,0.,1.)*float(count-
 vec3 spectrum(float t){return lookup(uSpectrum,log(max(t,1000.)/1000.)/log(500.),2048).rgb;}
 void main(){
  vec4 path=texture(uPath,uv),hit=texture(uHit,uv);vec3 rgb=vec3(0);
- float r=max(hit.x,isco),phase=hit.y+uAzimuth-(hit.z+uTime+160.)/(r*sqrt(r)+.9);
- // Derivatives are evaluated before branching, with azimuth seams unwrapped.
- vec2 footprint=vec2(fwidth(log(r)),abs(wrap(dFdx(phase)))+abs(wrap(dFdy(phase))));
  if(path.x>.5&&path.x<1.5){
-  vec2 material=field(hit.x,hit.y+uAzimuth,hit.z+uTime,footprint);
+  vec2 material=field(hit.x,hit.y+uAzimuth,hit.z+uTime);
   float te=lookup(uProfile,log(hit.x/isco)/log(38./isco),4096).r*pow(material.x,.25);
   rgb=spectrum(te*hit.w);
   if(uHighlight>.5)rgb*=.045+.955*smoothstep(.06,.65,material.y);
