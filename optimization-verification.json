@@ -1,0 +1,352 @@
+{
+  "measured_on": "2026-09-13",
+  "performance": {
+    "width": 1000,
+    "height": 700,
+    "timing": "GPU elapsed queries",
+    "glError": 0,
+    "results": [
+      {
+        "inclination": 75,
+        "field": 55,
+        "trace": [
+          {
+            "samples_ms": [
+              23.977984,
+              24.344576,
+              24.634368,
+              26.652672,
+              26.68032,
+              30.096384,
+              32.06656,
+              32.9984
+            ],
+            "median_ms": 26.666496
+          },
+          {
+            "samples_ms": [
+              24.515584,
+              24.594432,
+              25.039872,
+              27.231232,
+              27.249664,
+              30.678016,
+              33.714176,
+              33.792
+            ],
+            "median_ms": 27.240448
+          }
+        ],
+        "display": [
+          {
+            "samples_ms": [
+              0.54784,
+              0.549888,
+              0.551936,
+              0.553984,
+              0.560128,
+              0.84992,
+              0.86016,
+              0.867328
+            ],
+            "median_ms": 0.557056
+          },
+          {
+            "samples_ms": [
+              0.508928,
+              0.512,
+              0.513024,
+              0.516096,
+              0.817152,
+              0.82944,
+              0.82944,
+              0.905216
+            ],
+            "median_ms": 0.666624
+          }
+        ]
+      },
+      {
+        "inclination": 75,
+        "field": 16,
+        "trace": [
+          {
+            "samples_ms": [
+              18.727936,
+              18.827264,
+              18.849792,
+              18.863104,
+              18.885632,
+              19.034112,
+              19.172352,
+              19.442688
+            ],
+            "median_ms": 18.874368
+          },
+          {
+            "samples_ms": [
+              17.185792,
+              17.238016,
+              17.28,
+              17.28512,
+              17.328128,
+              17.463296,
+              18.125824,
+              19.301376
+            ],
+            "median_ms": 17.306624
+          }
+        ],
+        "display": [
+          {
+            "samples_ms": [
+              0.534528,
+              0.549888,
+              0.551936,
+              0.553984,
+              0.811008,
+              0.827392,
+              0.869376,
+              0.922624
+            ],
+            "median_ms": 0.682496
+          },
+          {
+            "samples_ms": [
+              0.560128,
+              0.561152,
+              0.561152,
+              0.5632,
+              0.566272,
+              0.837632,
+              0.996352,
+              1.206272
+            ],
+            "median_ms": 0.564736
+          }
+        ]
+      },
+      {
+        "inclination": 102,
+        "field": 35,
+        "trace": [
+          {
+            "samples_ms": [
+              22.120448,
+              22.127616,
+              22.131712,
+              22.135808,
+              22.147072,
+              22.171648,
+              22.217728,
+              22.76864
+            ],
+            "median_ms": 22.141440000000003
+          },
+          {
+            "samples_ms": [
+              22.279168,
+              22.285312,
+              22.355968,
+              22.35904,
+              22.411264,
+              22.43072,
+              22.907904,
+              23.083008
+            ],
+            "median_ms": 22.385151999999998
+          }
+        ],
+        "display": [
+          {
+            "samples_ms": [
+              0.550912,
+              0.564224,
+              0.564224,
+              0.565248,
+              0.566272,
+              0.83456,
+              0.96256,
+              1.067008
+            ],
+            "median_ms": 0.56576
+          },
+          {
+            "samples_ms": [
+              0.54272,
+              0.543744,
+              0.543744,
+              0.54784,
+              0.658432,
+              0.893952,
+              0.961536,
+              0.96256
+            ],
+            "median_ms": 0.603136
+          }
+        ]
+      },
+      {
+        "inclination": 15,
+        "field": 40,
+        "trace": [
+          {
+            "samples_ms": [
+              15.556608,
+              15.558656,
+              15.55968,
+              15.56992,
+              15.572992,
+              15.579136,
+              15.606784,
+              15.65184
+            ],
+            "median_ms": 15.571456
+          },
+          {
+            "samples_ms": [
+              15.773696,
+              15.776768,
+              15.77984,
+              15.787008,
+              15.823872,
+              16.323584,
+              16.457728,
+              16.564224
+            ],
+            "median_ms": 15.80544
+          }
+        ],
+        "display": [
+          {
+            "samples_ms": [
+              0.566272,
+              0.579584,
+              0.579584,
+              0.579584,
+              0.579584,
+              0.580608,
+              0.582656,
+              0.914432
+            ],
+            "median_ms": 0.579584
+          },
+          {
+            "samples_ms": [
+              0.617472,
+              0.621568,
+              0.622592,
+              0.622592,
+              0.62464,
+              0.627712,
+              0.912384,
+              1.081344
+            ],
+            "median_ms": 0.623616
+          }
+        ]
+      }
+    ]
+  },
+  "transfer": [
+    {
+      "inclination": 75,
+      "field": 55,
+      "grid_rays": 10240,
+      "classification_mismatches": 0,
+      "disk_order_mismatches": 0,
+      "unresolved": 0,
+      "max_disk_delta_r_phi_t_g": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "inclination": 75,
+      "field": 14,
+      "grid_rays": 10240,
+      "classification_mismatches": 0,
+      "disk_order_mismatches": 0,
+      "unresolved": 0,
+      "max_disk_delta_r_phi_t_g": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "inclination": 102,
+      "field": 35,
+      "grid_rays": 10240,
+      "classification_mismatches": 0,
+      "disk_order_mismatches": 0,
+      "unresolved": 0,
+      "max_disk_delta_r_phi_t_g": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "inclination": 15,
+      "field": 40,
+      "grid_rays": 10240,
+      "classification_mismatches": 0,
+      "disk_order_mismatches": 0,
+      "unresolved": 0,
+      "max_disk_delta_r_phi_t_g": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "inclination": 90,
+      "field": 55,
+      "grid_rays": 10240,
+      "classification_mismatches": 0,
+      "disk_order_mismatches": 0,
+      "unresolved": 0,
+      "max_disk_delta_r_phi_t_g": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "inclination": 5,
+      "field": 40,
+      "grid_rays": 10240,
+      "classification_mismatches": 0,
+      "disk_order_mismatches": 0,
+      "unresolved": 0,
+      "max_disk_delta_r_phi_t_g": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "inclination": 175,
+      "field": 40,
+      "grid_rays": 10240,
+      "classification_mismatches": 0,
+      "disk_order_mismatches": 0,
+      "unresolved": 0,
+      "max_disk_delta_r_phi_t_g": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "limits": "Paired 8-sample GPU timings per view at 1000x700. Different viewports and GPUs may behave differently. Star filtering and procedural texture filtering add display work. No universal FPS increase is claimed."
+}

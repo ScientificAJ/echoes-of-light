@@ -9,10 +9,11 @@ const gl=canvas.getContext('webgl2',{alpha:false,antialias:false,preserveDrawing
 if(!gl||!gl.getExtension('EXT_color_buffer_float')){
  $('loading').textContent='This live renderer requires WebGL 2 with floating-point color buffers. The 6K still remains available under “Study & source”.';return;
 }
-const defaults={elevation:15,azimuth:0,roll:13,width:55,time:0,speed:1800,exposure:0,bloom:20,quality:'balanced',spectrum:'euv',mode:0,highlight:false};
+const defaults={elevation:15,azimuth:0,roll:13,width:55,time:0,speed:1800,exposure:0,bloom:20,stars:100,quality:'balanced',spectrum:'euv',mode:0,highlight:false};
 const state={...defaults,playing:!matchMedia('(prefers-reduced-motion: reduce)').matches};
-let transfer=null,light=null,spectra={},profile,lastFrame=performance.now(),frameCount=0,fpsStamp=lastFrame;
-let dragging=false,probe=null,traceCount=0,traceMs=0,lastMode='',tourStart=null;
+let transfer=null,light=null,background=null,spectra={},profile,lastFrame=performance.now(),frameCount=0,fpsStamp=lastFrame,frameRequest=null;
+let dragging=false,probe=null,traceCount=0,shadeCount=0,skyCount=0,lastMode='',lastSky='',lastShade='',lastPost='',tourStart=null;
+function requestFrame(){if(frameRequest===null&&!document.hidden)frameRequest=requestAnimationFrame(frame);}
 const rad=d=>d*Math.PI/180,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
 function program(src){const p=gl.createProgram();gl.attachShader(p,shader(gl.VERTEX_SHADER,ECHO_SHADERS.vertex));gl.attachShader(p,shader(gl.FRAGMENT_SHADER,src));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return {p,loc:new Map()};}
@@ -22,23 +23,25 @@ function texture(w,h,data=null,half=false){const t=gl.createTexture();gl.bindTex
 function target(w,h,count=1,half=false){const f=gl.createFramebuffer(),tex=[];gl.bindFramebuffer(gl.FRAMEBUFFER,f);for(let k=0;k<count;k++){tex.push(texture(w,h,null,half));gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0+k,gl.TEXTURE_2D,tex[k],0);}gl.drawBuffers(tex.map((_,k)=>gl.COLOR_ATTACHMENT0+k));if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('Floating-point framebuffer is incomplete');return {f,tex,w,h};}
 function free(t){if(!t)return;gl.deleteFramebuffer(t.f);t.tex.forEach(x=>gl.deleteTexture(x));}
 function bind(p,name,t,unit){gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,t);integer(p,name,unit);}
-let traceProgram,shadeProgram,postProgram;
+let traceProgram,shadeProgram,skyProgram,postProgram;
 try{
- traceProgram=program(ECHO_SHADERS.trace);shadeProgram=program(ECHO_SHADERS.shade);postProgram=program(ECHO_SHADERS.post);
+ traceProgram=program(ECHO_SHADERS.trace);shadeProgram=program(ECHO_SHADERS.shade);skyProgram=program(ECHO_SHADERS.sky);postProgram=program(ECHO_SHADERS.post);
  const a=new Float32Array(4096*4);ECHO_SPECTRA.profile.forEach((v,i)=>a[i*4]=v);profile=texture(4096,1,a);
  for(const name of ['euv','visible']){const a=new Float32Array(2048*4);for(let k=0;k<2048;k++)for(let c=0;c<3;c++)a[k*4+c]=ECHO_SPECTRA[name][k*3+c];spectra[name]=texture(2048,1,a);}
 }catch(e){$('loading').textContent='Renderer could not start: '+e.message;console.error(e);return;}
-function setUI(){
- for(const id of ['elevation','azimuth','roll','exposure','bloom','speed','quality','spectrum','mode'])$(id).value=state[id];
+function setUI(wake=true){
+ for(const id of ['elevation','azimuth','roll','exposure','bloom','stars','speed','quality','spectrum','mode'])$(id).value=state[id];
  $('elevation-value').textContent=state.elevation.toFixed(1)+'°';$('azimuth-value').textContent=state.azimuth.toFixed(0)+'°';$('roll-value').textContent=state.roll.toFixed(0)+'°';$('exposure-value').textContent=(state.exposure>=0?'+':'')+state.exposure.toFixed(1)+' EV';
  $('bloom-value').textContent=Math.round(state.bloom)+'%';$('highlight').checked=state.highlight;
+ $('stars-value').textContent=state.stars===0?'Off':Math.round(state.stars)+'%';
  $('pause').textContent=state.playing?'Ⅱ Pause':'▶ Play';$('pause').setAttribute('aria-pressed',String(!state.playing));
  $('band').textContent=state.spectrum==='euv'?'EUV · FALSE COLOR':'VISIBLE SPECTRUM';
  $('compression').textContent=state.speed===1?'Real time':`1 second = ${state.speed/60} min`;
  $('timeline').value=state.time/3600;$('time-value').textContent=(state.time>=0?'+':'−')+Math.abs(state.time/3600).toFixed(2)+' h';
  $('view-value').textContent=`${state.width.toFixed(1)} rg field`;
+ if(wake)requestFrame();
 }
-function invalidate(keepTour=false){if(!keepTour&&tourStart!==null){tourStart=null;$('tour').textContent='Guided orbit';}probe=null;$('probe').hidden=true;}
+function invalidate(keepTour=false){if(!keepTour&&tourStart!==null){tourStart=null;$('tour').textContent='Guided orbit';}probe=null;$('probe').hidden=true;requestFrame();}
 function resize(){const rect=canvas.getBoundingClientRect();const dpr=Math.min(devicePixelRatio,1.5);const w=Math.round(rect.width*dpr),h=Math.round(rect.height*dpr);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;invalidate();}}
 new ResizeObserver(resize).observe(canvas);resize();
 function rayMap(){
@@ -48,21 +51,32 @@ function rayMap(){
  // Kerr axisymmetry lets azimuth changes reuse the exact transfer map.
  const mode=`${w},${h},${state.elevation},${state.width},${state.roll}`;
  if(lastMode===mode)return;
- if(!transfer||transfer.w!==w||transfer.h!==h){free(transfer);free(light);transfer=target(w,h,2);light=target(w,h,1,true);}
- const start=performance.now();gl.bindFramebuffer(gl.FRAMEBUFFER,transfer.f);gl.viewport(0,0,w,h);gl.useProgram(traceProgram.p);
+ if(!transfer||transfer.w!==w||transfer.h!==h){free(transfer);free(light);free(background);transfer=target(w,h,2);light=target(w,h,1,true);background=target(w,h,1,true);lastSky='';lastShade='';lastPost='';}
+ gl.bindFramebuffer(gl.FRAMEBUFFER,transfer.f);gl.viewport(0,0,w,h);gl.useProgram(traceProgram.p);
  uniform(traceProgram,'uSize',[w,h]);uniform(traceProgram,'uWidth',state.width);uniform(traceProgram,'uInclination',rad(90-state.elevation));uniform(traceProgram,'uRoll',rad(state.roll));uniform(traceProgram,'uStep',.028);
- gl.drawArrays(gl.TRIANGLES,0,3);traceCount++;traceMs=performance.now()-start;lastMode=mode;
+ gl.drawArrays(gl.TRIANGLES,0,3);traceCount++;lastMode=mode;
  $('resolution').textContent=`${w} × ${h} rays`;$('loading').hidden=true;
 }
-function draw(){
- gl.bindFramebuffer(gl.FRAMEBUFFER,light.f);gl.viewport(0,0,light.w,light.h);gl.useProgram(shadeProgram.p);
- bind(shadeProgram,'uHit',transfer.tex[0],0);bind(shadeProgram,'uPath',transfer.tex[1],1);bind(shadeProgram,'uProfile',profile,2);bind(shadeProgram,'uSpectrum',spectra[state.spectrum],3);
- uniform(shadeProgram,'uTime',state.time/492.563989396);uniform(shadeProgram,'uAzimuth',rad(state.azimuth));uniform(shadeProgram,'uHighlight',state.highlight?1:0);integer(shadeProgram,'uMode',state.mode);gl.drawArrays(gl.TRIANGLES,0,3);
- gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,canvas.width,canvas.height);gl.useProgram(postProgram.p);bind(postProgram,'uColor',light.tex[0],0);
- uniform(postProgram,'uSize',[light.w,light.h]);uniform(postProgram,'uExposure',1.25*Math.pow(2,state.exposure));uniform(postProgram,'uBloom',state.mode>2?0:state.bloom/100);gl.drawArrays(gl.TRIANGLES,0,3);
+function draw(force=false){
+ const skyKey=`${lastMode},${state.azimuth},${state.spectrum}`;
+ if(state.mode===0&&state.stars>0&&lastSky!==skyKey){
+  gl.bindFramebuffer(gl.FRAMEBUFFER,background.f);gl.viewport(0,0,background.w,background.h);gl.useProgram(skyProgram.p);
+  bind(skyProgram,'uPath',transfer.tex[1],0);bind(skyProgram,'uSpectrum',spectra[state.spectrum],1);uniform(skyProgram,'uAzimuth',rad(state.azimuth));gl.drawArrays(gl.TRIANGLES,0,3);lastSky=skyKey;skyCount++;
+ }
+ const shadeKey=`${skyKey},${state.time},${state.highlight},${state.mode},${state.exposure},${state.stars}`;
+ if(force||lastShade!==shadeKey){
+  gl.bindFramebuffer(gl.FRAMEBUFFER,light.f);gl.viewport(0,0,light.w,light.h);gl.useProgram(shadeProgram.p);
+  bind(shadeProgram,'uHit',transfer.tex[0],0);bind(shadeProgram,'uPath',transfer.tex[1],1);bind(shadeProgram,'uProfile',profile,2);bind(shadeProgram,'uSpectrum',spectra[state.spectrum],3);bind(shadeProgram,'uSky',background.tex[0],4);
+  uniform(shadeProgram,'uTime',state.time/492.563989396);uniform(shadeProgram,'uAzimuth',rad(state.azimuth));uniform(shadeProgram,'uHighlight',state.highlight?1:0);uniform(shadeProgram,'uExposure',1.25*Math.pow(2,state.exposure));uniform(shadeProgram,'uStars',state.stars/100);integer(shadeProgram,'uMode',state.mode);gl.drawArrays(gl.TRIANGLES,0,3);lastShade=shadeKey;shadeCount++;
+ }
+ const postKey=`${shadeKey},${state.bloom},${canvas.width},${canvas.height}`;
+ if(force||lastPost!==postKey){
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(0,0,canvas.width,canvas.height);gl.useProgram(postProgram.p);bind(postProgram,'uColor',light.tex[0],0);
+  uniform(postProgram,'uSize',[light.w,light.h]);uniform(postProgram,'uBloom',state.mode>2?0:state.bloom/100);gl.drawArrays(gl.TRIANGLES,0,3);lastPost=postKey;
+ }
 }
 function frame(now){
- if(document.hidden){lastFrame=now;requestAnimationFrame(frame);return;}
+ frameRequest=null;if(document.hidden){lastFrame=now;return;}
  const dt=(now-lastFrame)/1000;lastFrame=now;
  if(state.playing){state.time+=dt*state.speed;if(state.time/3600>+$('timeline').max)$('timeline').max=Math.ceil(state.time/86400)*24; $('timeline').value=state.time/3600;}
  if(tourStart!==null){
@@ -72,11 +86,11 @@ function frame(now){
    [state.elevation,state.azimuth,state.width,state.roll]=a.slice(1).map((x,k)=>x+(b[k+1]-x)*f);invalidate(true);}
  }
  rayMap();draw();frameCount++;
- if(now-fpsStamp>750){$('fps').textContent=Math.round(frameCount*1000/(now-fpsStamp))+' fps';fpsStamp=now;frameCount=0;setUI();updateProbe();$('renderer-state').textContent=`GPU Kerr · ${traceCount} camera passes`;
+ if(now-fpsStamp>750||!state.playing){$('fps').textContent=state.playing?Math.round(frameCount*1000/(now-fpsStamp))+' fps':'Paused';fpsStamp=now;frameCount=0;setUI(false);updateProbe();$('renderer-state').textContent=`GPU Kerr · ${traceCount} ray maps · ${skyCount} sky passes · ${shadeCount} light passes`;
  }
- requestAnimationFrame(frame);
+ if(state.playing||tourStart!==null)requestFrame();
 }
-document.addEventListener('visibilitychange',()=>{lastFrame=performance.now();});
+document.addEventListener('visibilitychange',()=>{lastFrame=performance.now();fpsStamp=lastFrame;frameCount=0;if(document.hidden){if(frameRequest!==null)cancelAnimationFrame(frameRequest);frameRequest=null;}else requestFrame();});
 function inspect(clientX,clientY){
  const rect=canvas.getBoundingClientRect(),x=clamp(Math.floor((clientX-rect.left)/rect.width*transfer.w),0,transfer.w-1),y=clamp(Math.floor((1-(clientY-rect.top)/rect.height)*transfer.h),0,transfer.h-1);
  const hit=new Float32Array(4),path=new Float32Array(4);gl.bindFramebuffer(gl.FRAMEBUFFER,transfer.f);gl.readBuffer(gl.COLOR_ATTACHMENT0);gl.readPixels(x,y,1,1,gl.RGBA,gl.FLOAT,hit);gl.readBuffer(gl.COLOR_ATTACHMENT1);gl.readPixels(x,y,1,1,gl.RGBA,gl.FLOAT,path);gl.readBuffer(gl.COLOR_ATTACHMENT0);gl.bindFramebuffer(gl.FRAMEBUFFER,null);
@@ -100,20 +114,20 @@ canvas.addEventListener('wheel',e=>{e.preventDefault();state.width=clamp(state.w
 canvas.addEventListener('dblclick',()=>{state.width=24;invalidate();setUI();});
 for(const id of ['elevation','roll'])$(id).addEventListener('input',e=>{state[id]=+e.target.value;invalidate();setUI();});
 $('azimuth').addEventListener('input',e=>{state.azimuth=+e.target.value;if(tourStart!==null){tourStart=null;$('tour').textContent='Guided orbit';invalidate();}setUI();});
-for(const id of ['exposure','bloom','speed'])$(id).addEventListener('input',e=>{state[id]=+e.target.value;setUI();});
-$('quality').addEventListener('change',e=>{state.quality=e.target.value;});
+for(const id of ['exposure','bloom','stars','speed'])$(id).addEventListener('input',e=>{state[id]=+e.target.value;setUI();});
+$('quality').addEventListener('change',e=>{state.quality=e.target.value;requestFrame();});
 $('spectrum').addEventListener('change',e=>{state.spectrum=e.target.value;setUI();});
-$('mode').addEventListener('change',e=>{state.mode=+e.target.value;});
-$('highlight').addEventListener('change',e=>{state.highlight=e.target.checked;});
+$('mode').addEventListener('change',e=>{state.mode=+e.target.value;requestFrame();});
+$('highlight').addEventListener('change',e=>{state.highlight=e.target.checked;requestFrame();});
 $('timeline').addEventListener('input',e=>{state.playing=false;state.time=+e.target.value*3600;setUI();});
-$('pause').addEventListener('click',()=>{state.playing=!state.playing;lastFrame=performance.now();setUI();});
+$('pause').addEventListener('click',()=>{state.playing=!state.playing;lastFrame=performance.now();fpsStamp=lastFrame;frameCount=0;setUI();});
 function reset(){Object.assign(state,defaults);$('timeline').max=48;probe=null;invalidate();setUI();}
 $('reset').addEventListener('click',reset);
 $('tour').addEventListener('click',()=>{if(tourStart!==null){tourStart=null;$('tour').textContent='Guided orbit';}else{tourStart=performance.now();state.elevation=18;state.azimuth=0;state.width=65;state.roll=10;state.playing=true;$('tour').textContent='Stop guided orbit';invalidate(true);}setUI();});
 for(const [id,elevation,roll,width] of [['wide',15,13,65],['underside',-12,13,35],['face',75,0,40],['echo',15,13,16]])$(id).addEventListener('click',()=>{state.elevation=elevation;state.roll=roll;state.width=width;invalidate();setUI();});
 $('zoom-in').addEventListener('click',()=>{state.width=clamp(state.width*.82,10,100);invalidate();setUI();});
 $('zoom-out').addEventListener('click',()=>{state.width=clamp(state.width/ .82,10,100);invalidate();setUI();});
-$('snapshot').addEventListener('click',()=>{draw();canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download='echoes-of-light-live.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},'image/png');});
+$('snapshot').addEventListener('click',()=>{rayMap();draw(true);canvas.toBlob(blob=>{if(!blob)return;const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download='echoes-of-light-live.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},'image/png');});
 $('probe-close').addEventListener('click',()=>{probe=null;$('probe').hidden=true;});
 document.addEventListener('keydown',e=>{
  if(['INPUT','SELECT','TEXTAREA'].includes(document.activeElement.tagName)||$('about').open)return;
@@ -125,5 +139,5 @@ document.addEventListener('keydown',e=>{
  }
 });
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();$('loading').hidden=false;$('loading').textContent='Graphics context paused. Reload to resume the live renderer.';});
-setUI();requestAnimationFrame(frame);
+setUI();
 })();

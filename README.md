@@ -8,7 +8,7 @@ An interactive Kerr black hole observatory. Light propagation, disk visibility, 
 
 ## Explore
 
-Drag to orbit, scroll or pinch to zoom, and tap to inspect a ray. Pause or scrub time, isolate lensed echoes and the moving filament, choose a spectral camera, or follow the guided orbit. The selected rendering resolution stays fixed while moving. Choose Fast on lighter devices and Fine for closer inspection.
+Drag to orbit, scroll or pinch to zoom, and tap to inspect a ray. Pause or scrub time, isolate lensed echoes and the moving filament, choose a spectral camera, or follow the guided orbit. Background stars follow the Kerr lens map, with adjustable brightness and pixel-footprint filtering. The selected rendering resolution stays fixed while moving, and paused scenes stop scheduling rendering work. Choose Fast on lighter devices and Fine for closer inspection.
 
 The visualization runs entirely in the browser with WebGL 2 and floating-point color buffers. No account, application server, external JavaScript dependency, or API key is required.
 
@@ -36,7 +36,7 @@ Read [the live rendering notes](LIVE-NOTES.md) and [the physical assumptions](PH
 
 `live/app.js` implements interaction and GPU orchestration. `live/shaders.js` contains the geodesic, emission, and display shaders. `live/build_tables.py` rebuilds the physical lookup tables. The C++ and Python sources reproduce the offline reference calculation.
 
-[live-verification.json](live-verification.json) records seven camera grids with 71,680 GPU rays and 1,939 reference comparison samples. [interaction-verification.json](interaction-verification.json) records local UI checks and their limits. Source and numerical evidence accompany the 6K stills.
+[live-verification.json](live-verification.json) records seven camera grids with 71,680 GPU rays and 1,939 reference comparison samples. [interaction-verification.json](interaction-verification.json) records local UI checks and their limits. [optimization-verification.json](optimization-verification.json) records the star-field update, paired GPU timings, and an unchanged 71,680-ray before/after comparison. Source and numerical evidence accompany the 6K stills.
 
 ## Hosting
 

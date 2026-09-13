@@ -30,5 +30,14 @@
       "elevation_degrees": -11.1
     },
     "note": "Measured during a live guided orbit in the local browser; performance is device-dependent."
+  },
+  "stars_and_performance_update": {
+    "stars_control": "Verified Off and 200 percent endpoints; Reset restores 100 percent.",
+    "idle": "Ray, sky, and light pass counters stayed unchanged while paused across a subsequent benchmark run.",
+    "playback": "Light-pass count and observation time advance during playback while ray-map and sky-pass counts remain fixed at a stationary viewpoint.",
+    "controls": "Paused spectral changes, echo-only mode, filament isolation, and reset were exercised without console errors.",
+    "sampling": "Same full spatial resolution during camera motion; noise and synthetic background source footprints are filtered.",
+    "numerical_comparison": "71,680 rays; zero class/order differences and identical disk-hit records.",
+    "performance_limit": "View-dependent: recorded close-view ray-tracing improvement, small timing regressions in other sampled views, plus idle/caching savings. No universal FPS claim."
   }
 }

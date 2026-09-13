@@ -9,7 +9,7 @@ Open `index.html` in a browser with WebGL 2 and floating-point color buffers. Th
 - Play/pause or scrub observation time. The initial time window is −24 to +48 hours; it expands as playback continues. Time is not looped or silently reset.
 - Select real time, 60×, 600×, 1,800×, or 3,600× compression. The displayed ratio is the simulated coordinate time per wall-clock second. Default: 1 second = 30 minutes.
 - Inspect a ray by tapping/clicking without dragging. Disk hits show emission radius, the combined frequency ratio, retarded emission coordinate, and image order. Captured and escaped rays are identified separately.
-- Adjust exposure and bloom. Choose the EUV false-color camera or the actual visible spectral band.
+- Adjust exposure, bloom, and background-star brightness (0–200%). Choose the EUV false-color camera or the actual visible spectral band.
 - Isolate direct light, lensed echoes, or the evolving filament. Frequency-shift and image-order views are explicitly diagnostic color maps. The source-isolation control dims the rest of the field; it does not create new rays or widen echoes.
 - Choose a preset view, start the guided orbit, hide controls, enter fullscreen, or export the current canvas as a PNG.
 - Keyboard: arrows orbit, +/− zoom, Space pauses, R resets, H hides controls. Native sliders and buttons are keyboard accessible. Reduced-motion users start paused.
@@ -54,6 +54,20 @@ This display uses one ray per transfer-map pixel and a filtered display image. I
 
 The live display uses the same fixed hue-preserving highlight shoulder and adjustable approximate optical bloom. EUV mode stretches 21.11–43.33 nm to 380–780 nm. Visible mode integrates the actual 380–780 nm band. Each mode is normalized relative to a 100,000 K reference in its own passband, so switching modes is not a calibrated measurement of the relative energy in those bands. Background sources remain synthetic blackbodies. Atmospheres, scattering, polarization, interstellar absorption, returning radiation, disk thickness, and backreaction are omitted.
 
+## Star field, sampling, and performance
+
+The background stars are evaluated on the same synthetic celestial sphere through the escaped Kerr rays. Disk intersections and captured rays mask them completely before optical bloom. Their current source density is 28 occupied cells per 1,000, on a 1,200 × 600 longitude/latitude grid. Source temperatures remain 45,000–125,000 K, using the selected spectral camera. Assigned source amplitudes are brighter than in the archived still to make this sparse field visible. Brightness, source sizes, and the grid are illustrative prescriptions rather than a calibrated star catalog.
+
+Finite Gaussian source widths vary from 0.065 to 0.090 cell units. A local elliptical pixel-footprint approximation filters the source intensity, including a flux-normalizing area factor. Angular derivatives unwrap longitude seams and are bounded at 0.75 cell units where a finite ray grid cannot resolve a caustic. This reduces point-source shimmer without inventing unresolved copies; exact subpixel caustic flux is not claimed. The background is cached until the camera transfer map, observer azimuth, or spectral passband changes.
+
+The disk's procedural noise bands are attenuated when their local spatial frequency exceeds the sampled pixel footprint. The same emission field is used for every image order. This is a display sampling approximation, not new disk physics, and avoids treating aliased speckles as resolved material. The tone-map shoulder is evaluated once in the shading pass before display interpolation, instead of repeating it for every bloom tap. Interpolation and nonlinear tone mapping do not commute exactly, so this is a small display-response change. Bloom is bypassed entirely when its strength is zero.
+
+An unchanged paused view schedules no animation frames and submits no new GPU drawing work. User input wakes rendering immediately. Unchanged ray maps, background light, and display passes are cached independently. The chosen ray-map resolution and integration step remain fixed during motion.
+
+Inward rays below the ISCO can terminate early only when positive Bernstein coefficients certify that the radial potential has no zero before the horizon. A conservative coefficient margin accounts for floating-point error. The test runs at two radial thresholds; unproven cases continue ordinary integration. Equatorial crossings wholly outside the emitting annulus on a monotonic radial step skip unnecessary crossing-position refinement. These changes affect work performed, not the metric or emitting geometry.
+
+[optimization-verification.json](optimization-verification.json) records paired GPU timing measurements and a before/after comparison of all 71,680 rays across seven test views. Their disk-hit radius, azimuth, retarded time, and frequency-shift records were identical; capture/escape classification and disk image order also matched. This finite comparison complements, rather than replaces, the existing double-precision reference audit. Timing results vary by viewpoint and device. This update is not a claim that every view has a higher frame rate; its main savings are idle rendering, cached background work, and some captured-ray paths.
+
 ## Camera and guided orbit
 
 The observer is asymptotically distant. Interactive orbiting selects distant observer directions; zoom changes the impact-coordinate field of view. These are instantaneous observer views, not the integrated trajectory or Doppler response of a moving camera. The camera cannot enter the disk or horizon.
@@ -76,6 +90,8 @@ Manual camera input cancels the tour. This is a specified interpolation of obser
 Across the matched disk samples, the largest differences were approximately 0.000313 rg in radius, 3.58 × 10⁻⁶ rad in azimuth, 0.000355 gravitational times in retarded time (about 0.175 seconds), and 1.61 × 10⁻⁶ in the frequency ratio. This is sampled validation at the stationary step setting, not a guarantee for every ray, driver, camera configuration, or unresolved image order.
 
 The desktop preview rendered at approximately 60 frames per second at a stationary viewpoint. After removing the resolution drop, one continuous guided-orbit sample rendered at 33 frames per second with a 1,000 × 716 ray map. Device performance and browser support vary; the displayed frame rate and ray-map dimensions describe the actual current session.
+
+The paired timing harness is [verification/benchmark.html](verification/benchmark.html), and the complete before/after ray-grid comparison is [verification/compare-geodesics.html](verification/compare-geodesics.html). The timing harness uses the browser’s [GPU elapsed-time query extension](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/), with synchronized wall time only as a labeled fallback.
 
 ## Source
 
